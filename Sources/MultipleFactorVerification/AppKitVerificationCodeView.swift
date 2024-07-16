@@ -5,9 +5,9 @@
 //  Created by Luc Vandal on 2024-07-16.
 //
 
+#if os(macOS)
 import Cocoa
 
-#if os(macOS)
 public class AppKitVerificationCodeView: NSView {
     public var code: String
     public var email: String
