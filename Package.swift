@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "MultipleFactorVerification",
-    platforms: [.macOS(.v10_14), .iOS(.v17), .tvOS(.v13), .watchOS(.v6), .macCatalyst(.v13)],
+    platforms: [.macOS(.v10_13), .iOS(.v17), .tvOS(.v13), .watchOS(.v6), .macCatalyst(.v13)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(

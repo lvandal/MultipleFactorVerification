@@ -92,7 +92,6 @@ public class AppKitVerificationCodeView: NSView {
         
         noCodeButton = NSButton(title: "Did not get a verification code?", target: self, action: #selector(didTapNoCode))
         noCodeButton.bezelStyle = .inline
-        noCodeButton.contentTintColor = .blue
         stackView.addArrangedSubview(noCodeButton)
         
         // Set the view to be the first responder to capture key events
