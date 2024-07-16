@@ -7,6 +7,7 @@
 
 import Cocoa
 
+#if os(macOS)
 public class AppKitVerificationCodeView: NSView {
     public var code: String
     public var email: String
@@ -250,3 +251,4 @@ private extension Character {
         return self >= "0" && self <= "9"
     }
 }
+#endif
