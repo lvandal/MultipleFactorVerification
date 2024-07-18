@@ -16,6 +16,7 @@ class VerificationCodeViewController: NSViewController {
     
     public var onSuccess: (() -> Void)?
     public var onFailure: (() -> Void)?
+    public var onCancel: (() -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +34,8 @@ class VerificationCodeViewController: NSViewController {
         },
                                                           onContactSupport: {
             print("Contact support logic")
+        }, onCancel: { [weak self] in
+            self?.onCancel?()
         })
         
         self.view.addSubview(verificationCodeView)

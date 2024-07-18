@@ -14,6 +14,7 @@ public class AppKitVerificationCodeView: NSView {
     public var onValidate: ((String, @escaping (Bool) -> Void) -> Void)?
     public var onResendCode: (() -> Void)?
     public var onContactSupport: (() -> Void)?
+    public var onCancel: (() -> Void)?
     
     private var input: String = ""
     private let numberOfCharacters = 6
@@ -24,11 +25,12 @@ public class AppKitVerificationCodeView: NSView {
     private var noCodeButton: NSButton!
     private var progressIndicator: NSProgressIndicator!
     
-    public init(email: String, onValidate: @escaping (String, @escaping (Bool) -> Void) -> Void, onResendCode: @escaping () -> Void, onContactSupport: @escaping () -> Void) {
+    public init(email: String, onValidate: @escaping (String, @escaping (Bool) -> Void) -> Void, onResendCode: @escaping () -> Void, onContactSupport: @escaping () -> Void, onCancel: @escaping () -> Void) {
         self.email = email
         self.onValidate = onValidate
         self.onResendCode = onResendCode
         self.onContactSupport = onContactSupport
+        self.onCancel = onCancel
         
         super.init(frame: .zero)
         
@@ -250,6 +252,8 @@ public class AppKitVerificationCodeView: NSView {
                 input.removeLast()
                 updateCharacterViews()
             }
+        } else if event.keyCode == 53 { // Esc key
+            onCancel?()
         } else if let character = characters.first, character.isNumber {
             input.append(character)
             if input.count > numberOfCharacters {

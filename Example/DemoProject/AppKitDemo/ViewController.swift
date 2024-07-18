@@ -37,6 +37,9 @@ class ViewController: NSViewController {
         sheetViewController.onFailure = { [weak self] in
             
         }
+        sheetViewController.onCancel = { [weak self] in
+            self?.dismiss(sheetViewController)
+        }
         presentAsSheet(sheetViewController)
     }
 }

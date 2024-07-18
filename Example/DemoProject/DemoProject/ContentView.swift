@@ -17,8 +17,10 @@ struct ContentView: View {
                 isPresented.toggle()
             }
         }
-        .sheet(isPresented: $isPresented) {
-            VerificationCodeView(email: "joe@blow.com",
+        .sheet(isPresented: $isPresented, onDismiss: {
+            print("cancelled?")
+        }) {
+            VerificationCodeView(email: "name@example.com",
                                  onValidate: { inputCode in
                 // Simulate an asynchronous validation process
                 await Task.sleep(2 * 1_000_000_000) // Sleep for 2 seconds

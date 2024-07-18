@@ -9,6 +9,8 @@ import SwiftUI
 
 @available(iOS 17.0, macOS 12.0, *)
 public struct VerificationCodeView: View {
+    @Environment(\.dismiss) var dismiss
+    
     public var email: String
     
     public var onValidate: ((String) async -> Bool)?
@@ -152,7 +154,7 @@ public struct VerificationCodeView: View {
                 if !valid {
                     shake = true
                 } else {
-                    // Close
+                    dismiss()
                 }
             }
         }
