@@ -9,10 +9,9 @@
 import Cocoa
 
 public class AppKitVerificationCodeView: NSView {
-    public var code: String
     public var email: String
     
-    public var onSuccess: ((String) -> Void)
+    public var onValidate: ((String, @escaping (Bool) -> Void) -> Void)?
     public var onResendCode: (() -> Void)?
     public var onContactSupport: (() -> Void)?
     
@@ -23,11 +22,11 @@ public class AppKitVerificationCodeView: NSView {
     private var stackView: NSStackView!
     private var codeStackView: NSStackView!
     private var noCodeButton: NSButton!
+    private var progressIndicator: NSProgressIndicator!
     
-    public init(code: String, email: String, onSuccess: @escaping (String) -> Void, onResendCode: @escaping () -> Void, onContactSupport: @escaping () -> Void) {
-        self.code = code
+    public init(email: String, onValidate: @escaping (String, @escaping (Bool) -> Void) -> Void, onResendCode: @escaping () -> Void, onContactSupport: @escaping () -> Void) {
         self.email = email
-        self.onSuccess = onSuccess
+        self.onValidate = onValidate
         self.onResendCode = onResendCode
         self.onContactSupport = onContactSupport
         
@@ -93,6 +92,14 @@ public class AppKitVerificationCodeView: NSView {
         noCodeButton = NSButton(title: "Did not get a verification code?", target: self, action: #selector(didTapNoCode))
         noCodeButton.bezelStyle = .inline
         stackView.addArrangedSubview(noCodeButton)
+        
+        // Progress Indicator
+        progressIndicator = NSProgressIndicator()
+        progressIndicator.style = .spinning
+        progressIndicator.controlSize = .small
+        progressIndicator.isDisplayedWhenStopped = false
+        progressIndicator.translatesAutoresizingMaskIntoConstraints = false
+        stackView.addArrangedSubview(progressIndicator)
         
         // Set the view to be the first responder to capture key events
         DispatchQueue.main.async {
@@ -173,12 +180,22 @@ public class AppKitVerificationCodeView: NSView {
             return
         }
         
-        if code != input {
-            shakeView()
-            input = ""
-            updateCharacterViews()
-        } else {
-            onSuccess(input)
+        progressIndicator.startAnimation(self)
+        
+        onValidate?(input) {valid in
+            DispatchQueue.main.async { [weak self]  in
+                guard let self else { return }
+                
+                progressIndicator.stopAnimation(self)
+                
+                if !valid {
+                    shakeView()
+                    input = ""
+                    updateCharacterViews()
+                } else {
+                    // Close
+                }
+            }
         }
     }
     

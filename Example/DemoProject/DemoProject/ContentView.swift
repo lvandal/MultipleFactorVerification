@@ -18,10 +18,11 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $isPresented) {
-            VerificationCodeView(code: "123456",
-                                 email: "joe@blow.com",
-                                 onSuccess: { input in
-                print("Verification code: \(input)")
+            VerificationCodeView(email: "joe@blow.com",
+                                 onValidate: { inputCode in
+                // Simulate an asynchronous validation process
+                await Task.sleep(2 * 1_000_000_000) // Sleep for 2 seconds
+                return inputCode == "123456" // Replace with actual validation logic
             },
                                  onResendCode: {
                 print("Resending code...")

@@ -9,16 +9,16 @@ import SwiftUI
 
 @available(iOS 17.0, macOS 12.0, *)
 public struct VerificationCodeView: View {
-    public var code: String
     public var email: String
     
-    public var onSuccess: ((String) -> Void)
+    public var onValidate: ((String) async -> Bool)?
     public var onResendCode: (() -> Void)?
     public var onContactSupport: (() -> Void)?
     
     @State private var input: String = ""
     @State private var shake: Bool = false
     @State private var showingOptions = false
+    @State private var isValidating = false
     
     @FocusState private var isFocused: Bool
     
@@ -72,6 +72,11 @@ public struct VerificationCodeView: View {
                 Button("Cancel", role: .cancel) {}
             }
             
+            ProgressView()
+                .progressViewStyle(.circular)
+                .controlSize(.small)
+                .opacity(isValidating ? 1 : 0)
+            
             // Hidden text field
             if #available(iOS 17.0, macOS 14.0, *) {
                 TextField("", text: $input)
@@ -112,10 +117,9 @@ public struct VerificationCodeView: View {
     }
     
     
-    public init(code: String, email: String, onSuccess: @escaping (String) -> Void, onResendCode: @escaping () -> Void, onContactSupport: @escaping () -> Void) {
-        self.code = code
+    public init(email: String, onValidate: @escaping (String) async -> Bool, onResendCode: @escaping () -> Void, onContactSupport: @escaping () -> Void) {
         self.email = email
-        self.onSuccess = onSuccess
+        self.onValidate = onValidate
         self.onResendCode = onResendCode
         self.onContactSupport = onContactSupport
     }
@@ -137,10 +141,20 @@ public struct VerificationCodeView: View {
             return
         }
         
-        if code != input {
-            shake = true
-        } else {
-            onSuccess(input)
+        isValidating = true
+        
+        Task {
+            let i = input
+            let valid = await onValidate?(i) ?? false
+            DispatchQueue.main.async {
+                isValidating = false
+                
+                if !valid {
+                    shake = true
+                } else {
+                    // Close
+                }
+            }
         }
     }
 }

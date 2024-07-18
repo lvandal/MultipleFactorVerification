@@ -14,16 +14,19 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        verificationCodeView = AppKitVerificationCodeView(code: "123456",
-                                                          email: "joe@blow.com",
-                                                          onSuccess: { input in
-            print("Verification code: \(input)")
+        verificationCodeView = AppKitVerificationCodeView(email: "joe@blow.com",
+                                                          onValidate: { inputCode, completion in
+            // Your validation logic here
+            DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                let isValid = inputCode == "123456" // Example condition
+                completion(isValid)
+            }
         },
                                                           onResendCode: {
-            print("Resending code...")
+            print("Resend code logic")
         },
                                                           onContactSupport: {
-            print("Contacting support...")
+            print("Contact support logic")
         })
         
         self.view.addSubview(verificationCodeView)
