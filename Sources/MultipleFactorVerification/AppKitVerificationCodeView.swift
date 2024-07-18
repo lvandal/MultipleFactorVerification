@@ -112,7 +112,7 @@ public class AppKitVerificationCodeView: NSView {
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            stackView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 1.0)
+            stackView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.95)
         ])
     }
     

@@ -11,34 +11,14 @@ import MultipleFactorVerification
 class ViewController: NSViewController {
     private var verificationCodeView: AppKitVerificationCodeView!
     
+    private var button: NSButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        verificationCodeView = AppKitVerificationCodeView(email: "joe@blow.com",
-                                                          onValidate: { inputCode, completion in
-            // Your validation logic here
-            DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
-                let isValid = inputCode == "123456" // Example condition
-                completion(isValid)
-            }
-        },
-                                                          onResendCode: {
-            print("Resend code logic")
-        },
-                                                          onContactSupport: {
-            print("Contact support logic")
-        })
-        
-        self.view.addSubview(verificationCodeView)
-        
-        // Set up Auto Layout constraints for `verificationCodeView`
-        verificationCodeView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            verificationCodeView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            verificationCodeView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
-            verificationCodeView.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 1.0),
-            verificationCodeView.heightAnchor.constraint(equalToConstant: 300) // Adjust height as needed
-        ])
+        button = NSButton(title: "Verify Code", target: self, action: #selector(didTap))
+        button.bezelStyle = .inline
+        view.addSubview(button)
     }
 
     override var representedObject: Any? {
@@ -46,7 +26,18 @@ class ViewController: NSViewController {
         // Update the view, if already loaded.
         }
     }
-
-
+    
+    @objc private func didTap() {
+        let sheetViewController = VerificationCodeViewController()
+        sheetViewController.email = "test@example.com"
+        
+        sheetViewController.onSuccess = { [weak self] in
+            self?.dismiss(sheetViewController)
+        }
+        sheetViewController.onFailure = { [weak self] in
+            
+        }
+        presentAsSheet(sheetViewController)
+    }
 }
 
