@@ -259,6 +259,18 @@ public class AppKitVerificationCodeView: NSView {
             validate()
         }
     }
+    
+    @IBAction func paste(_ sender: Any) {
+        handlePaste()
+    }
+    
+    private func handlePaste() {
+        if let string = NSPasteboard.general.string(forType: .string), string.count == numberOfCharacters, let _ = Int(string) {
+            input = string
+            updateCharacterViews()
+            validate()
+        }
+    }
 }
 
 
