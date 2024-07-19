@@ -1,0 +1,21 @@
+/* 
+  Localizable.strings
+  MultipleFactorVerification
+
+  Created by Luc Vandal on 2024-07-19.
+  
+*/
+
+"STR_2FA_CODE_VERIFICATION_TITLE" = "Zwei-Faktor-Authentifizierung";
+
+"STR_2FA_CODE_VERIFICATION_INSTRUCTION_FMT" = "Eine Nachricht mit einem Verifizierungscode wurde an %@ gesendet. Bitte geben Sie den Code ein, um fortzufahren.";
+
+"STR_2FA_CODE_VERIFICATION_NO_CODE_BTN" = "Keinen Verifizierungscode erhalten?";
+
+"STR_CANCEL" = "Abbrechen";
+
+"STR_CODE_OPTIONS_TITLE" = "Verifizierungscode-Optionen";
+
+"STR_RESEND_CODE" = "Code erneut senden";
+
+"STR_CONTACT_SUPPORT" = "Support kontaktieren";

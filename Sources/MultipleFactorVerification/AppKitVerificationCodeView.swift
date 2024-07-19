@@ -49,7 +49,7 @@ public class AppKitVerificationCodeView: NSView {
         stackView.alignment = .centerX
         addSubview(stackView)
         
-        let titleLabel = NSTextField(labelWithString: "Two-factor authentication")
+        let titleLabel = NSTextField(labelWithString: NSLocalizedString("STR_2FA_CODE_VERIFICATION_TITLE", bundle: .module, comment: ""))
         titleLabel.font = NSFont.systemFont(ofSize: 18, weight: .medium)
         titleLabel.textColor = .secondaryLabelColor
         titleLabel.alignment = .center
@@ -79,7 +79,7 @@ public class AppKitVerificationCodeView: NSView {
         }
         stackView.addArrangedSubview(codeStackView)
         
-        let instructionLabel = NSTextField(labelWithString: "A message with a verification code has been sent to \(email). Please enter the code to continue.")
+        let instructionLabel = NSTextField(labelWithString: String.localizedStringWithFormat(NSLocalizedString("STR_2FA_CODE_VERIFICATION_INSTRUCTION_FMT", bundle: .module, comment: ""), email))
         instructionLabel.textColor = .secondaryLabelColor
         instructionLabel.alignment = .center
         instructionLabel.lineBreakMode = .byWordWrapping
@@ -91,7 +91,7 @@ public class AppKitVerificationCodeView: NSView {
         // Set minimum width constraint
         instructionLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 400).isActive = true
         
-        noCodeButton = NSButton(title: "Did not get a verification code?", target: self, action: #selector(didTapNoCode))
+        noCodeButton = NSButton(title: NSLocalizedString("STR_2FA_CODE_VERIFICATION_NO_CODE_BTN", bundle: Bundle.module, comment: ""), target: self, action: #selector(didTapNoCode))
         noCodeButton.bezelStyle = .inline
         stackView.addArrangedSubview(noCodeButton)
         
@@ -104,7 +104,7 @@ public class AppKitVerificationCodeView: NSView {
         stackView.addArrangedSubview(progressIndicator)
         
         // Cancel Button
-        cancelButton = NSButton(title: "Cancel", target: self, action: #selector(didTapCancel))
+        cancelButton = NSButton(title: NSLocalizedString("STR_CANCEL", bundle: Bundle.module, comment: ""), target: self, action: #selector(didTapCancel))
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         addSubview(cancelButton)
         
@@ -132,12 +132,11 @@ public class AppKitVerificationCodeView: NSView {
     
     @objc private func didTapNoCode() {
         let alert = NSAlert()
-        alert.messageText = "Verification Code Options"
-        alert.informativeText = "Choose an option"
+        alert.messageText = NSLocalizedString("STR_CODE_OPTIONS_TITLE", bundle: Bundle.module, comment: "")
         alert.alertStyle = .informational
-        alert.addButton(withTitle: "Resend Code")
-        alert.addButton(withTitle: "Contact Support")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: NSLocalizedString("STR_RESEND_CODE", bundle: Bundle.module, comment: ""))
+        alert.addButton(withTitle: NSLocalizedString("STR_CONTACT_SUPPORT", bundle: Bundle.module, comment: ""))
+        alert.addButton(withTitle: NSLocalizedString("STR_CANCEL", bundle: Bundle.module, comment: ""))
         
         if let window {
             alert.beginSheetModal(for: window) { [weak self] response in
