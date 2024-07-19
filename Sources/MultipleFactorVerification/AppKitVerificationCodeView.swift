@@ -23,6 +23,7 @@ public class AppKitVerificationCodeView: NSView {
     private var stackView: NSStackView!
     private var codeStackView: NSStackView!
     private var noCodeButton: NSButton!
+    private var cancelButton: NSButton!
     private var progressIndicator: NSProgressIndicator!
     
     public init(email: String, onValidate: @escaping (String, @escaping (Bool) -> Void) -> Void, onResendCode: @escaping () -> Void, onContactSupport: @escaping () -> Void, onCancel: @escaping () -> Void) {
@@ -31,7 +32,6 @@ public class AppKitVerificationCodeView: NSView {
         self.onResendCode = onResendCode
         self.onContactSupport = onContactSupport
         self.onCancel = onCancel
-        
         super.init(frame: .zero)
         
         setupView()
@@ -103,6 +103,11 @@ public class AppKitVerificationCodeView: NSView {
         progressIndicator.translatesAutoresizingMaskIntoConstraints = false
         stackView.addArrangedSubview(progressIndicator)
         
+        // Cancel Button
+        cancelButton = NSButton(title: "Cancel", target: self, action: #selector(didTapCancel))
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(cancelButton)
+        
         // Set the view to be the first responder to capture key events
         DispatchQueue.main.async {
             self.window?.makeFirstResponder(self)
@@ -114,8 +119,15 @@ public class AppKitVerificationCodeView: NSView {
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            stackView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.95)
+            stackView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.95),
+            
+            cancelButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
+            cancelButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10)
         ])
+    }
+    
+    @objc private func didTapCancel() {
+        onCancel?()
     }
     
     @objc private func didTapNoCode() {
