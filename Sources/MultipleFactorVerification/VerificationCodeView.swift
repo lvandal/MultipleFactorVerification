@@ -27,95 +27,115 @@ public struct VerificationCodeView: View {
     private let numberOfCharacters = 6
     
     public var body: some View {
-        VStack {
-            Text("Two-factor authentication")
-                .font(.title3)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-            
-            HStack(spacing: 10) {
-                ForEach(0..<numberOfCharacters, id: \.self) { index in
-                    RoundedRectangle(cornerRadius: 5)
-                        .stroke(shake ? .red : .blue, lineWidth: 2)
-                        .frame(width: 40, height: 46)
-                        .overlay(
-                            Text(character(at: index))
-                                .font(.title)
-                        )
-                }
-            }
-            .padding()
-            .onTapGesture {
-                isFocused = true
-            }
-            .shake($shake, duration: 0.5) {
-                input = ""
-            }
-            
-            Text("A message with a verification code has been sent to **\(email)**. Please enter the code to continue.")
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.bottom)
-            
-            Button("Did not get a verification code?") {
-                showingOptions.toggle()
-            }
-            .buttonStyle(.borderless)
-            .foregroundColor(.blue)
-            .confirmationDialog("", isPresented: $showingOptions) {
-                Button("Resend Code") {
-                    onResendCode?()
-                }
-                
-                Button("Contact Support") {
-                    onContactSupport?()
-                }
-                
-                Button("Cancel", role: .cancel) {}
-            }
-            
-            ProgressView()
-                .progressViewStyle(.circular)
-                .controlSize(.small)
-                .opacity(isValidating ? 1 : 0)
-            
-            // Hidden text field
-            if #available(iOS 17.0, macOS 14.0, *) {
-                TextField("", text: $input)
-#if os(iOS)
-                    .keyboardType(.numberPad)
-#endif
-                    .focused($isFocused)
-                    .frame(width: 0, height: 0)
-                    .opacity(0)
-                    .onChange(of: input) { _, _ in
-                        input = input.filter { $0.isNumber }
-                        if input.count > numberOfCharacters {
-                            input = String(input.prefix(numberOfCharacters))
+        ZStack(alignment: .topTrailing) {
+            GeometryReader { geometry in
+                ScrollView(showsIndicators: false) {
+                    VStack {
+                        Text(NSLocalizedString("STR_2FA_CODE_VERIFICATION_TITLE", bundle: Bundle.module, comment: ""))
+                            .font(.title3)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                        
+                        HStack(spacing: 10) {
+                            ForEach(0..<numberOfCharacters, id: \.self) { index in
+                                RoundedRectangle(cornerRadius: 5)
+                                    .stroke(shake ? .red : .blue, lineWidth: 2)
+                                    .frame(width: 40, height: 46)
+                                    .overlay(
+                                        Text(character(at: index))
+                                            .font(.title)
+                                    )
+                            }
                         }
-                        validate()
-                    }
-            } else {
-                TextField("", text: $input)
-#if os(iOS)
-                    .keyboardType(.numberPad)
-#endif
-                    .focused($isFocused)
-                    .frame(width: 0, height: 0)
-                    .opacity(0)
-                    .onChange(of: input) { _ in
-                        input = input.filter { $0.isNumber }
-                        if input.count > numberOfCharacters {
-                            input = String(input.prefix(numberOfCharacters))
+                        .padding()
+                        .onTapGesture {
+                            isFocused = true
                         }
-                        validate()
+                        .shake($shake, duration: 0.5) {
+                            input = ""
+                        }
+                        
+                        Text(String.localizedStringWithFormat(NSLocalizedString("STR_2FA_CODE_VERIFICATION_INSTRUCTION_FMT", bundle: .module, comment: ""), email))
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.bottom)
+                        
+                        Button(NSLocalizedString("STR_2FA_CODE_VERIFICATION_NO_CODE_BTN", bundle: Bundle.module, comment: "")) {
+                            showingOptions.toggle()
+                        }
+                        .buttonStyle(.borderless)
+                        .foregroundColor(.blue)
+                        .confirmationDialog("", isPresented: $showingOptions) {
+                            Button(NSLocalizedString("STR_RESEND_CODE", bundle: Bundle.module, comment: "")) {
+                                onResendCode?()
+                            }
+                            
+                            Button(NSLocalizedString("STR_CONTACT_SUPPORT", bundle: Bundle.module, comment: "")) {
+                                onContactSupport?()
+                            }
+                            
+                            Button(NSLocalizedString("STR_CANCEL", bundle: Bundle.module, comment: ""), role: .cancel) {}
+                        }
+                        
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .controlSize(.small)
+                            .opacity(isValidating ? 1 : 0)
+                        
+                        // Hidden text field
+                        if #available(iOS 17.0, macOS 14.0, *) {
+                            TextField("", text: $input)
+#if os(iOS)
+                                .keyboardType(.numberPad)
+#endif
+                                .focused($isFocused)
+                                .frame(width: 0, height: 0)
+                                .opacity(0)
+                                .onChange(of: input) { _, _ in
+                                    input = input.filter { $0.isNumber }
+                                    if input.count > numberOfCharacters {
+                                        input = String(input.prefix(numberOfCharacters))
+                                    }
+                                    validate()
+                                }
+                        } else {
+                            TextField("", text: $input)
+#if os(iOS)
+                                .keyboardType(.numberPad)
+#endif
+                                .focused($isFocused)
+                                .frame(width: 0, height: 0)
+                                .opacity(0)
+                                .onChange(of: input) { _ in
+                                    input = input.filter { $0.isNumber }
+                                    if input.count > numberOfCharacters {
+                                        input = String(input.prefix(numberOfCharacters))
+                                    }
+                                    validate()
+                                }
+                        }
                     }
+                    .padding(40)
+                    .frame(minHeight: geometry.size.height)
+                    .onAppear() {
+                        isFocused = true
+                    }
+                }
+                .frame(width: geometry.size.width)
             }
+            
+            SheetCloseButton()
+#if !os(macOS)
+                .padding(24)
+#else
+                .padding()
+#endif
         }
-        .padding()
-        .onAppear() {
-            isFocused = true
-        }
+#if os(macOS)
+        .frame(height: 260)
+#elseif os(visionOS)
+        .frame(height: 300)
+#endif
     }
     
     
@@ -257,6 +277,51 @@ fileprivate extension View {
             DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
                 continuation.resume()
             }
+        }
+    }
+}
+
+
+@available(iOS 17.0, macOS 12.0, *)
+fileprivate struct SheetCloseButton: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) var colorScheme
+    
+    var buttonSize: CGFloat = 24
+    let renderShadow = true
+    
+    var body: some View {
+        Button {
+            dismiss()
+        } label: {
+            Image(systemName: "xmark.circle.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: buttonSize, height: buttonSize)
+                .symbolRenderingMode(.hierarchical)
+        }
+        .foregroundStyle(colorScheme == .light ? Color.accentColor : Color.white)
+        .buttonStyle(.borderless)
+#if !os(macOS)
+        .frame(width: buttonSize, height: buttonSize)
+        .hoverEffect()
+#endif
+        .modifier(SheetCloseButtonModifier(renderShadow: renderShadow))
+    }
+}
+
+
+@available(iOS 17.0, macOS 12.0, *)
+fileprivate struct SheetCloseButtonModifier: ViewModifier {
+    var renderShadow: Bool
+    
+    func body(content: Content) -> some View {
+        if renderShadow {
+            content
+                .shadow(radius: 2)
+        }
+        else {
+            content
         }
     }
 }
