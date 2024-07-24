@@ -279,6 +279,25 @@ public class AppKitVerificationCodeView: NSView {
         handlePaste()
     }
     
+    public override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        if event.type == NSEvent.EventType.keyDown {
+            if event.modifierFlags.contains(.command) {
+                guard let characters = event.charactersIgnoringModifiers else {
+                    return super.performKeyEquivalent(with: event)
+                }
+                switch characters {
+                case "v", ".": // DVORAK uses .
+                    handlePaste()
+                    return true
+                    
+                default:
+                    break
+                }
+            }
+        }
+        return super.performKeyEquivalent(with: event)
+    }
+    
     private func handlePaste() {
         if let string = NSPasteboard.general.string(forType: .string), string.count == numberOfCharacters, let _ = Int(string) {
             input = string
