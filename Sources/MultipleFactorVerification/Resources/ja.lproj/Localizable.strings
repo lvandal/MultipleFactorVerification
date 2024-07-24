@@ -1,0 +1,21 @@
+/* 
+  Localizable.strings
+  MultipleFactorVerification
+
+  Created by Luc Vandal on 2024-07-24.
+  
+*/
+
+"STR_2FA_CODE_VERIFICATION_TITLE" = "二要素認証";
+
+"STR_2FA_CODE_VERIFICATION_INSTRUCTION_FMT" = "確認コードが %@ に送信されました。続行するには、コードを入力してください。";
+
+"STR_2FA_CODE_VERIFICATION_NO_CODE_BTN" = "確認コードを受け取りませんでしたか？";
+
+"STR_CANCEL" = "キャンセル";
+
+"STR_CODE_OPTIONS_TITLE" = "確認コードのオプション";
+
+"STR_RESEND_CODE" = "コードを再送信";
+
+"STR_CONTACT_SUPPORT" = "サポートに連絡";
