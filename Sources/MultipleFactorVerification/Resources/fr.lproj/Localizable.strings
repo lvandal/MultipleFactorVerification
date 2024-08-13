@@ -6,16 +6,16 @@
   
 */
 
-"STR_2FA_CODE_VERIFICATION_TITLE" = "双因素认证";
+"STR_2FA_CODE_VERIFICATION_TITLE" = "Authentification à deux facteurs";
 
-"STR_2FA_CODE_VERIFICATION_INSTRUCTION_FMT" = "一个包含验证码的消息已发送到 %@。请输入验证码以继续。";
+"STR_2FA_CODE_VERIFICATION_INSTRUCTION_FMT" = "Un message contenant un code de vérification a été envoyé à %@. Veuillez entrer le code pour continuer.";
 
-"STR_2FA_CODE_VERIFICATION_NO_CODE_BTN" = "没有收到验证码？";
+"STR_2FA_CODE_VERIFICATION_NO_CODE_BTN" = "Vous n'avez pas reçu de code de vérification ?";
 
-"STR_CANCEL" = "取消";
+"STR_CANCEL" = "Annuler";
 
-"STR_CODE_OPTIONS_TITLE" = "验证码选项";
+"STR_CODE_OPTIONS_TITLE" = "Options de Code de Vérification";
 
-"STR_RESEND_CODE" = "重新发送验证码";
+"STR_RESEND_CODE" = "Renvoyer le code";
 
-"STR_CONTACT_SUPPORT" = "联系支持";
+"STR_CONTACT_SUPPORT" = "Contacter le support";
