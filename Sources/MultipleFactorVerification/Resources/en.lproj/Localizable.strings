@@ -19,3 +19,13 @@
 "STR_RESEND_CODE" = "Resend Code";
 
 "STR_CONTACT_SUPPORT" = "Contact Support";
+
+"STR_VERIFICATION_CODE_FAILED_TITLE" = "Verification Failed";
+
+"STR_OK" = "OK";
+
+"STR_INVALID_ERROR" = "The entered code is invalid.";
+
+"STR_EXPIRED_ERROR" = "The entered code has expired.";
+
+"STR_UNKNOWN_ERROR" = "An unknown error has occured.";

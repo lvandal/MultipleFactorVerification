@@ -7,13 +7,32 @@
 
 import SwiftUI
 
+public enum CodeValidationError: Error, CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .invalid: return "STR_INVALID_ERROR"
+        case .expired: return "STR_EXPIRED_ERROR"
+        case .unknownError: return "STR_UNKNOWN_ERROR"
+        }
+    }
+    
+    case invalid
+    case expired
+    case unknownError
+    
+    public var localizedDescription: String {
+        return NSLocalizedString(description, comment: "")
+    }
+}
+
+
 @available(iOS 17.0, macOS 12.0, *)
 public struct VerificationCodeView: View {
     @Environment(\.dismiss) var dismiss
     
     public var email: String
     
-    public var onValidate: ((String) async -> Bool)?
+    public var onValidate: ((String) async -> (Bool, CodeValidationError?))?
     public var onResendCode: (() -> Void)?
     public var onContactSupport: (() -> Void)?
     
@@ -21,6 +40,7 @@ public struct VerificationCodeView: View {
     @State private var shake: Bool = false
     @State private var showingOptions = false
     @State private var isValidating = false
+    @State private var error: CodeValidationError? = nil
     
     @FocusState private var isFocused: Bool
     
@@ -60,21 +80,16 @@ public struct VerificationCodeView: View {
                             .multilineTextAlignment(.center)
                             .padding(.bottom)
                         
-                        Button(NSLocalizedString("STR_2FA_CODE_VERIFICATION_NO_CODE_BTN", bundle: Bundle.module, comment: "")) {
-                            showingOptions.toggle()
-                        }
-                        .buttonStyle(.borderless)
-                        .foregroundColor(.blue)
-                        .confirmationDialog("", isPresented: $showingOptions) {
+                        HStack {
                             Button(NSLocalizedString("STR_RESEND_CODE", bundle: Bundle.module, comment: "")) {
                                 onResendCode?()
                             }
-                            
+                            .modifier(LinkButtonModifier())
+                            Spacer()
                             Button(NSLocalizedString("STR_CONTACT_SUPPORT", bundle: Bundle.module, comment: "")) {
                                 onContactSupport?()
                             }
-                            
-                            Button(NSLocalizedString("STR_CANCEL", bundle: Bundle.module, comment: ""), role: .cancel) {}
+                            .modifier(LinkButtonModifier())
                         }
                         
                         ProgressView()
@@ -131,6 +146,13 @@ public struct VerificationCodeView: View {
                 .padding()
 #endif
         }
+        .alert(NSLocalizedString("STR_VERIFICATION_CODE_FAILED_TITLE", bundle: Bundle.module, comment: ""), isPresented: .constant(error != nil), actions: {
+            Button(NSLocalizedString("STR_OK", bundle: Bundle.module, comment: "")) {
+                error = nil
+            }
+        }, message: {
+            Text(NSLocalizedString(error?.localizedDescription ?? "STR_UNKNOWN_ERROR", bundle: Bundle.module, comment: ""))
+        })
 #if os(macOS)
         .frame(height: 260)
 #elseif os(visionOS)
@@ -139,13 +161,12 @@ public struct VerificationCodeView: View {
     }
     
     
-    public init(email: String, onValidate: @escaping (String) async -> Bool, onResendCode: @escaping () -> Void, onContactSupport: @escaping () -> Void) {
+    public init(email: String, onValidate: @escaping (String) async -> (Bool, CodeValidationError?), onResendCode: @escaping () -> Void, onContactSupport: @escaping () -> Void) {
         self.email = email
         self.onValidate = onValidate
         self.onResendCode = onResendCode
         self.onContactSupport = onContactSupport
     }
-    
     
     private func character(at index: Int) -> String {
         if index < input.count {
@@ -167,13 +188,20 @@ public struct VerificationCodeView: View {
         
         Task {
             let i = input
-            let valid = await onValidate?(i) ?? false
+            let (success, error) = await onValidate?(i) ?? (false, nil)
+            
             DispatchQueue.main.async {
                 isValidating = false
                 
-                if !valid {
-                    shake = true
-                } else {
+                if let error {
+                    switch error {
+                    case .invalid:
+                        shake = true
+                        
+                    default:
+                        self.error = error
+                    }
+                } else if success {
                     dismiss()
                 }
             }
@@ -323,5 +351,19 @@ fileprivate struct SheetCloseButtonModifier: ViewModifier {
         else {
             content
         }
+    }
+}
+
+
+@available(iOS 17.0, macOS 12.0, *)
+fileprivate struct LinkButtonModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+#if os(macOS)
+            .buttonStyle(.link)
+#else
+            .buttonStyle(.borderless)
+            .foregroundColor(.accentColor)
+#endif
     }
 }

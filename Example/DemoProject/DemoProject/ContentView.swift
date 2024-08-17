@@ -23,8 +23,10 @@ struct ContentView: View {
             VerificationCodeView(email: "name@example.com",
                                  onValidate: { inputCode in
                 // Simulate an asynchronous validation process
-                await Task.sleep(2 * 1_000_000_000) // Sleep for 2 seconds
-                return inputCode == "123456" // Replace with actual validation logic
+                await Task.sleep(1 * 1_000_000_000) // Sleep for 1 seconds
+//                return (false, .expired)
+//                return (true, nil)
+                return (false, .invalid)
             },
                                  onResendCode: {
                 print("Resending code...")
