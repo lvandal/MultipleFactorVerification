@@ -52,6 +52,7 @@ public struct VerificationCodeView: View {
             GeometryReader { geometry in
                 ScrollView(showsIndicators: false) {
                     VStack {
+                        Spacer()
                         Text(NSLocalizedString("STR_2FA_CODE_VERIFICATION_TITLE", bundle: Bundle.module, comment: ""))
                             .font(.title3)
                             .foregroundStyle(.secondary)
@@ -60,7 +61,7 @@ public struct VerificationCodeView: View {
                         HStack(spacing: 10) {
                             ForEach(0..<numberOfCharacters, id: \.self) { index in
                                 RoundedRectangle(cornerRadius: 5)
-                                    .stroke(shake ? .red : .blue, lineWidth: 2)
+                                    .stroke(shake ? .red : isValidating ? .gray : .blue, lineWidth: 2)
                                     .frame(width: 40, height: 46)
                                     .overlay(
                                         Text(character(at: index))
@@ -68,6 +69,7 @@ public struct VerificationCodeView: View {
                                     )
                             }
                         }
+                        .disabled(isValidating)
                         .padding()
                         .onTapGesture {
                             isFocused = true
@@ -81,6 +83,12 @@ public struct VerificationCodeView: View {
                             .multilineTextAlignment(.center)
                             .padding(.bottom)
                         
+                        Spacer()
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .opacity(isValidating ? 1 : 0)
+                        Spacer()
+                        
                         HStack {
                             Button(NSLocalizedString("STR_RESEND_CODE", bundle: Bundle.module, comment: "")) {
                                 onResendCode()
@@ -93,11 +101,6 @@ public struct VerificationCodeView: View {
                             .modifier(LinkButtonModifier())
                         }
                         
-                        ProgressView()
-                            .progressViewStyle(.circular)
-                            .controlSize(.small)
-                            .opacity(isValidating ? 1 : 0)
-                        
                         // Hidden text field
                         if #available(iOS 17.0, macOS 14.0, *) {
                             TextField("", text: $input)
@@ -108,6 +111,8 @@ public struct VerificationCodeView: View {
                                 .frame(width: 0, height: 0)
                                 .opacity(0)
                                 .onChange(of: input) { _, _ in
+                                    guard !isValidating else { return }
+                                    
                                     input = input.filter { $0.isNumber }
                                     if input.count > numberOfCharacters {
                                         input = String(input.prefix(numberOfCharacters))
@@ -123,6 +128,8 @@ public struct VerificationCodeView: View {
                                 .frame(width: 0, height: 0)
                                 .opacity(0)
                                 .onChange(of: input) { _ in
+                                    guard !isValidating else { return }
+                                    
                                     input = input.filter { $0.isNumber }
                                     if input.count > numberOfCharacters {
                                         input = String(input.prefix(numberOfCharacters))
@@ -150,6 +157,7 @@ public struct VerificationCodeView: View {
                 .padding()
 #endif
         }
+        .modifier(SheetModifier())
         .alert(NSLocalizedString("STR_VERIFICATION_CODE_FAILED_TITLE", bundle: Bundle.module, comment: ""), isPresented: .constant(error != nil), actions: {
             Button(NSLocalizedString("STR_OK", bundle: Bundle.module, comment: "")) {
                 error = nil
@@ -158,9 +166,9 @@ public struct VerificationCodeView: View {
             Text(NSLocalizedString(error?.localizedDescription ?? "STR_UNKNOWN_ERROR", bundle: Bundle.module, comment: ""))
         })
 #if os(macOS)
-        .frame(height: 260)
-#elseif os(visionOS)
         .frame(height: 300)
+#elseif os(visionOS)
+        .frame(height: 340)
 #endif
     }
     
@@ -176,6 +184,7 @@ public struct VerificationCodeView: View {
         self.onContactSupport = onContactSupport
         self.onCancel = onCancel
     }
+    
     
     private func character(at index: Int) -> String {
         if index < input.count {
@@ -376,5 +385,18 @@ fileprivate struct LinkButtonModifier: ViewModifier {
             .buttonStyle(.borderless)
             .foregroundColor(.accentColor)
 #endif
+    }
+}
+
+
+@available(iOS 17.0, macOS 12.0, *)
+fileprivate struct SheetModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 18.0, macOS 15.0, visionOS 2.0, *) {
+            content
+                .presentationSizing(.form)
+        } else {
+            content
+        }
     }
 }
