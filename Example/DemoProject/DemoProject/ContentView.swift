@@ -17,22 +17,22 @@ struct ContentView: View {
                 isPresented.toggle()
             }
         }
-        .sheet(isPresented: $isPresented, onDismiss: {
-            print("cancelled?")
-        }) {
+        .sheet(isPresented: $isPresented) {
             VerificationCodeView(email: "name@example.com",
                                  onValidate: { inputCode in
                 // Simulate an asynchronous validation process
                 await Task.sleep(1 * 1_000_000_000) // Sleep for 1 seconds
 //                return (false, .expired)
-//                return (true, nil)
-                return (false, .invalid)
+                return (true, nil)
+//                return (false, .invalid)
             },
                                  onResendCode: {
                 print("Resending code...")
             },
                                  onContactSupport: {
                 print("Contacting support...")
+            }, onCancel: {
+                print("Cancelled...")
             })
         }
         .padding()

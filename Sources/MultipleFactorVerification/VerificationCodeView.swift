@@ -32,9 +32,10 @@ public struct VerificationCodeView: View {
     
     public var email: String
     
-    public var onValidate: ((String) async -> (Bool, CodeValidationError?))?
-    public var onResendCode: (() -> Void)?
-    public var onContactSupport: (() -> Void)?
+    public var onValidate: ((String) async -> (Bool, CodeValidationError?))
+    public var onResendCode: (() -> Void)
+    public var onContactSupport: (() -> Void)
+    public var onCancel: (() -> Void)
     
     @State private var input: String = ""
     @State private var shake: Bool = false
@@ -82,12 +83,12 @@ public struct VerificationCodeView: View {
                         
                         HStack {
                             Button(NSLocalizedString("STR_RESEND_CODE", bundle: Bundle.module, comment: "")) {
-                                onResendCode?()
+                                onResendCode()
                             }
                             .modifier(LinkButtonModifier())
                             Spacer()
                             Button(NSLocalizedString("STR_CONTACT_SUPPORT", bundle: Bundle.module, comment: "")) {
-                                onContactSupport?()
+                                onContactSupport()
                             }
                             .modifier(LinkButtonModifier())
                         }
@@ -139,7 +140,10 @@ public struct VerificationCodeView: View {
                 .frame(width: geometry.size.width)
             }
             
-            SheetCloseButton()
+            SheetCloseButton(onPressed: {
+                onCancel()
+                dismiss()
+            })
 #if !os(macOS)
                 .padding(24)
 #else
@@ -161,11 +165,16 @@ public struct VerificationCodeView: View {
     }
     
     
-    public init(email: String, onValidate: @escaping (String) async -> (Bool, CodeValidationError?), onResendCode: @escaping () -> Void, onContactSupport: @escaping () -> Void) {
+    public init(email: String,
+                onValidate: @escaping (String) async -> (Bool, CodeValidationError?),
+                onResendCode: @escaping (() -> Void),
+                onContactSupport: @escaping (() -> Void),
+                onCancel: @escaping () -> Void) {
         self.email = email
         self.onValidate = onValidate
         self.onResendCode = onResendCode
         self.onContactSupport = onContactSupport
+        self.onCancel = onCancel
     }
     
     private func character(at index: Int) -> String {
@@ -188,7 +197,7 @@ public struct VerificationCodeView: View {
         
         Task {
             let i = input
-            let (success, error) = await onValidate?(i) ?? (false, nil)
+            let (success, error) = await onValidate(i)
             
             DispatchQueue.main.async {
                 isValidating = false
@@ -312,15 +321,16 @@ fileprivate extension View {
 
 @available(iOS 17.0, macOS 12.0, *)
 fileprivate struct SheetCloseButton: View {
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) var colorScheme
     
     var buttonSize: CGFloat = 24
     let renderShadow = true
     
+    var onPressed: (() -> Void)
+    
     var body: some View {
         Button {
-            dismiss()
+            onPressed()
         } label: {
             Image(systemName: "xmark.circle.fill")
                 .resizable()
@@ -330,6 +340,7 @@ fileprivate struct SheetCloseButton: View {
         }
         .foregroundStyle(colorScheme == .light ? Color.accentColor : Color.white)
         .buttonStyle(.borderless)
+        .keyboardShortcut(.cancelAction)
 #if !os(macOS)
         .frame(width: buttonSize, height: buttonSize)
         .hoverEffect()
