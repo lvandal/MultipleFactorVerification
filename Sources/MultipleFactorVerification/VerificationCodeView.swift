@@ -34,7 +34,7 @@ public struct VerificationCodeView: View {
     
     public var onValidate: ((String) async -> (Bool, CodeValidationError?))
     public var onResendCode: (() -> Void)
-    public var onContactSupport: (() -> Void)
+    public var onContactSupport: (() -> Void)?
     public var onCancel: (() -> Void)
     
     @State private var input: String = ""
@@ -94,11 +94,14 @@ public struct VerificationCodeView: View {
                                 onResendCode()
                             }
                             .modifier(LinkButtonModifier())
-                            Spacer()
-                            Button(NSLocalizedString("STR_CONTACT_SUPPORT", bundle: Bundle.module, comment: "")) {
-                                onContactSupport()
+                            
+                            if onContactSupport != nil {
+                                Spacer()
+                                Button(NSLocalizedString("STR_CONTACT_SUPPORT", bundle: Bundle.module, comment: "")) {
+                                    onContactSupport?()
+                                }
+                                .modifier(LinkButtonModifier())
                             }
-                            .modifier(LinkButtonModifier())
                         }
                         
                         // Hidden text field
@@ -176,7 +179,7 @@ public struct VerificationCodeView: View {
     public init(email: String,
                 onValidate: @escaping (String) async -> (Bool, CodeValidationError?),
                 onResendCode: @escaping (() -> Void),
-                onContactSupport: @escaping (() -> Void),
+                onContactSupport: (() -> Void)? = nil,
                 onCancel: @escaping () -> Void) {
         self.email = email
         self.onValidate = onValidate
