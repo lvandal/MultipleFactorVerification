@@ -61,7 +61,7 @@ public struct VerificationCodeView: View {
                         HStack(spacing: 10) {
                             ForEach(0..<numberOfCharacters, id: \.self) { index in
                                 RoundedRectangle(cornerRadius: 5)
-                                    .stroke(shake ? .red : isValidating ? .gray : .blue, lineWidth: 2)
+                                    .stroke(shake ? .red : isValidating ? .gray : .accentColor, lineWidth: 2)
                                     .frame(width: 40, height: 46)
                                     .overlay(
                                         Text(character(at: index))
