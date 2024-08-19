@@ -19,3 +19,19 @@
 "STR_RESEND_CODE" = "Повторно отправить код";
 
 "STR_CONTACT_SUPPORT" = "Связаться с поддержкой";
+
+"STR_VERIFICATION_CODE_FAILED_TITLE" = "Ошибка проверки";
+
+"STR_OK" = "OK";
+
+"STR_INVALID_ERROR" = "Введенный код недействителен.";
+
+"STR_EXPIRED_ERROR" = "Введенный код истек.";
+
+"STR_UNKNOWN_ERROR" = "Произошла неизвестная ошибка.";
+
+"STR_2FA_CODE_RESENT_TITLE" = "Код отправлен повторно";
+
+"STR_2FA_CODE_VERIFICATION_RESENT_FMT" = "Новый код подтверждения был отправлен на %@.";
+
+"STR_OPERATION_FAILED_TITLE" = "Ошибка операции";

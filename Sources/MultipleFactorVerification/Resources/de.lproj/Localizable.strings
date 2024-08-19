@@ -19,3 +19,19 @@
 "STR_RESEND_CODE" = "Code erneut senden";
 
 "STR_CONTACT_SUPPORT" = "Support kontaktieren";
+
+"STR_VERIFICATION_CODE_FAILED_TITLE" = "Verifizierung fehlgeschlagen";
+
+"STR_OK" = "OK";
+
+"STR_INVALID_ERROR" = "Der eingegebene Code ist ungültig.";
+
+"STR_EXPIRED_ERROR" = "Der eingegebene Code ist abgelaufen.";
+
+"STR_UNKNOWN_ERROR" = "Ein unbekannter Fehler ist aufgetreten.";
+
+"STR_2FA_CODE_RESENT_TITLE" = "Code erneut gesendet";
+
+"STR_2FA_CODE_VERIFICATION_RESENT_FMT" = "Ein neuer Bestätigungscode wurde an %@ gesendet.";
+
+"STR_OPERATION_FAILED_TITLE" = "Vorgang fehlgeschlagen";

@@ -19,3 +19,19 @@
 "STR_RESEND_CODE" = "Renvoyer le code";
 
 "STR_CONTACT_SUPPORT" = "Contacter le support";
+
+"STR_VERIFICATION_CODE_FAILED_TITLE" = "Échec de la vérification";
+
+"STR_OK" = "OK";
+
+"STR_INVALID_ERROR" = "Le code entré est invalide.";
+
+"STR_EXPIRED_ERROR" = "Le code entré a expiré.";
+
+"STR_UNKNOWN_ERROR" = "Une erreur inconnue est survenue.";
+
+"STR_2FA_CODE_RESENT_TITLE" = "Code renvoyé";
+
+"STR_2FA_CODE_VERIFICATION_RESENT_FMT" = "Un nouveau code de vérification a été envoyé à %@.";
+
+"STR_OPERATION_FAILED_TITLE" = "Échec de l'opération";

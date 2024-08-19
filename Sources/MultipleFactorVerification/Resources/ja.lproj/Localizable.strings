@@ -19,3 +19,19 @@
 "STR_RESEND_CODE" = "コードを再送信";
 
 "STR_CONTACT_SUPPORT" = "サポートに連絡";
+
+"STR_VERIFICATION_CODE_FAILED_TITLE" = "認証失敗";
+
+"STR_OK" = "OK";
+
+"STR_INVALID_ERROR" = "入力されたコードが無効です。";
+
+"STR_EXPIRED_ERROR" = "入力されたコードの有効期限が切れています。";
+
+"STR_UNKNOWN_ERROR" = "不明なエラーが発生しました。";
+
+"STR_2FA_CODE_RESENT_TITLE" = "コードを再送信しました";
+
+"STR_2FA_CODE_VERIFICATION_RESENT_FMT" = "新しい確認コードが%@に送信されました。";
+
+"STR_OPERATION_FAILED_TITLE" = "操作に失敗しました";

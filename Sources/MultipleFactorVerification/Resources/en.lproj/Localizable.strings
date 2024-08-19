@@ -29,3 +29,9 @@
 "STR_EXPIRED_ERROR" = "The entered code has expired.";
 
 "STR_UNKNOWN_ERROR" = "An unknown error has occured.";
+
+"STR_2FA_CODE_RESENT_TITLE" = "Code Resent";
+
+"STR_2FA_CODE_VERIFICATION_RESENT_FMT" = "A new verification code has been sent to %@.";
+
+"STR_OPERATION_FAILED_TITLE" = "Operation Failed";

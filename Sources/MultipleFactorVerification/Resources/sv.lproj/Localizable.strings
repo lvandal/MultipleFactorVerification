@@ -19,3 +19,19 @@
 "STR_RESEND_CODE" = "Skicka koden igen";
 
 "STR_CONTACT_SUPPORT" = "Kontakta support";
+
+"STR_VERIFICATION_CODE_FAILED_TITLE" = "Verifiering misslyckades";
+
+"STR_OK" = "OK";
+
+"STR_INVALID_ERROR" = "Den angivna koden är ogiltig.";
+
+"STR_EXPIRED_ERROR" = "Den angivna koden har gått ut.";
+
+"STR_UNKNOWN_ERROR" = "Ett okänt fel har inträffat.";
+
+"STR_2FA_CODE_RESENT_TITLE" = "Kod skickad igen";
+
+"STR_2FA_CODE_VERIFICATION_RESENT_FMT" = "En ny verifieringskod har skickats till %@.";
+
+"STR_OPERATION_FAILED_TITLE" = "Åtgärden misslyckades";

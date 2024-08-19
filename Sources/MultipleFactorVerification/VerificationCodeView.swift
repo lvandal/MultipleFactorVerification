@@ -33,13 +33,14 @@ public struct VerificationCodeView: View {
     public var email: String
     
     public var onValidate: ((String) async -> (Bool, CodeValidationError?))
-    public var onResendCode: (() -> Void)
+    public var onResendCode: (() async -> (Bool, CodeValidationError?))
     public var onContactSupport: (() -> Void)?
     public var onCancel: (() -> Void)
     
     @State private var input: String = ""
+    @State private var alertMessage = ""
     @State private var shake: Bool = false
-    @State private var showingOptions = false
+    @State private var showingAlert = false
     @State private var isValidating = false
     @State private var error: CodeValidationError? = nil
     
@@ -91,9 +92,10 @@ public struct VerificationCodeView: View {
                         
                         HStack {
                             Button(NSLocalizedString("STR_RESEND_CODE", bundle: Bundle.module, comment: "")) {
-                                onResendCode()
+                                resendCode()
                             }
                             .modifier(LinkButtonModifier())
+                            .disabled(isValidating)
                             
                             if onContactSupport != nil {
                                 Spacer()
@@ -101,6 +103,7 @@ public struct VerificationCodeView: View {
                                     onContactSupport?()
                                 }
                                 .modifier(LinkButtonModifier())
+                                .disabled(isValidating)
                             }
                         }
                         
@@ -122,6 +125,7 @@ public struct VerificationCodeView: View {
                                     }
                                     validate()
                                 }
+                                .disabled(isValidating)
                         } else {
                             TextField("", text: $input)
 #if os(iOS)
@@ -139,6 +143,7 @@ public struct VerificationCodeView: View {
                                     }
                                     validate()
                                 }
+                                .disabled(isValidating)
                         }
                     }
                     .padding(40)
@@ -148,20 +153,28 @@ public struct VerificationCodeView: View {
                     }
                 }
                 .frame(width: geometry.size.width)
+                .alert(NSLocalizedString("STR_2FA_CODE_RESENT_TITLE", bundle: Bundle.module, comment: ""), isPresented: $showingAlert, actions: {
+                    Button(NSLocalizedString("STR_OK", bundle: Bundle.module, comment: "")) {
+                        alertMessage = ""
+                    }
+                }, message: {
+                    Text(alertMessage)
+                })
             }
             
             SheetCloseButton(onPressed: {
                 onCancel()
                 dismiss()
             })
+            .disabled(isValidating)
 #if !os(macOS)
-                .padding(24)
+            .padding(24)
 #else
-                .padding()
+            .padding()
 #endif
         }
         .modifier(SheetModifier())
-        .alert(NSLocalizedString("STR_VERIFICATION_CODE_FAILED_TITLE", bundle: Bundle.module, comment: ""), isPresented: .constant(error != nil), actions: {
+        .alert(NSLocalizedString(error == .unknownError ? "STR_OPERATION_FAILED_TITLE" : "STR_VERIFICATION_CODE_FAILED_TITLE", bundle: Bundle.module, comment: ""), isPresented: .constant(error != nil), actions: {
             Button(NSLocalizedString("STR_OK", bundle: Bundle.module, comment: "")) {
                 error = nil
             }
@@ -178,7 +191,7 @@ public struct VerificationCodeView: View {
     
     public init(email: String,
                 onValidate: @escaping (String) async -> (Bool, CodeValidationError?),
-                onResendCode: @escaping (() -> Void),
+                onResendCode: @escaping () async -> (Bool, CodeValidationError?),
                 onContactSupport: (() -> Void)? = nil,
                 onCancel: @escaping () -> Void) {
         self.email = email
@@ -201,7 +214,7 @@ public struct VerificationCodeView: View {
     
     
     private func validate() {
-        guard input.count == numberOfCharacters else {
+        guard input.count == numberOfCharacters, !isValidating else {
             return
         }
         
@@ -224,6 +237,29 @@ public struct VerificationCodeView: View {
                     }
                 } else if success {
                     dismiss()
+                }
+            }
+        }
+    }
+    
+    
+    private func resendCode() {
+        isValidating = true
+        
+        Task {
+            let (success, error) = await onResendCode()
+            
+            DispatchQueue.main.async {
+                isValidating = false
+                
+                if let error {
+                    switch error {
+                    default:
+                        self.error = error
+                    }
+                } else if success {
+                    alertMessage = String.localizedStringWithFormat(NSLocalizedString("STR_2FA_CODE_VERIFICATION_RESENT_FMT", bundle: .module, comment: ""), email)
+                    showingAlert.toggle()
                 }
             }
         }

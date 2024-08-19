@@ -19,3 +19,19 @@
 "STR_RESEND_CODE" = "重新发送验证码";
 
 "STR_CONTACT_SUPPORT" = "联系支持";
+
+"STR_VERIFICATION_CODE_FAILED_TITLE" = "验证失败";
+
+"STR_OK" = "OK";
+
+"STR_INVALID_ERROR" = "输入的代码无效。";
+
+"STR_EXPIRED_ERROR" = "输入的代码已过期。";
+
+"STR_UNKNOWN_ERROR" = "发生未知错误。";
+
+"STR_2FA_CODE_RESENT_TITLE" = "代码已重新发送";
+
+"STR_2FA_CODE_VERIFICATION_RESENT_FMT" = "一个新的验证码已发送到 %@。";
+
+"STR_OPERATION_FAILED_TITLE" = "操作失败";
