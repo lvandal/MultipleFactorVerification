@@ -382,11 +382,11 @@ fileprivate struct SheetCloseButtonModifier: ViewModifier {
 fileprivate struct LinkButtonModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
+            .foregroundColor(.accentColor)
 #if os(macOS)
             .buttonStyle(.link)
 #else
             .buttonStyle(.borderless)
-            .foregroundColor(.accentColor)
 #endif
     }
 }
