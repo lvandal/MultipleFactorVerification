@@ -226,6 +226,7 @@ public struct VerificationCodeView: View {
             
             DispatchQueue.main.async {
                 isValidating = false
+                isFocused = true
                 
                 if let error {
                     switch error {
@@ -251,6 +252,7 @@ public struct VerificationCodeView: View {
             
             DispatchQueue.main.async {
                 isValidating = false
+                isFocused = true
                 
                 if let error {
                     switch error {
