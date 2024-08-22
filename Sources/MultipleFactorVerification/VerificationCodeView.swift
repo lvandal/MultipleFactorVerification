@@ -26,7 +26,7 @@ public enum CodeValidationError: Error, CustomStringConvertible {
 }
 
 
-@available(iOS 17.0, macOS 12.0, *)
+@available(iOS 17.0, macOS 12.0, visionOS 1.1, *)
 public struct VerificationCodeView: View {
     @Environment(\.dismiss) var dismiss
     
@@ -59,24 +59,49 @@ public struct VerificationCodeView: View {
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
                         
-                        HStack(spacing: 10) {
-                            ForEach(0..<numberOfCharacters, id: \.self) { index in
-                                RoundedRectangle(cornerRadius: 5)
-                                    .stroke(shake ? .red : isValidating ? .gray : .accentColor, lineWidth: 2)
-                                    .frame(width: 40, height: 46)
-                                    .overlay(
-                                        Text(character(at: index))
-                                            .font(.title)
-                                    )
+                        ZStack {
+                            // Hidden text field
+                            if #available(iOS 17.0, macOS 14.0, visionOS 1.1, *) {
+                                TextField("", text: $input)
+#if !os(macOS)
+                                    .keyboardType(.numberPad)
+                                    .textContentType(.oneTimeCode)
+#endif
+                                    .focused($isFocused)
+                                    .frame(width: 0, height: 0)
+                                    .opacity(0)
+                                    .onChange(of: input) { _, _ in
+                                        guard !isValidating else { return }
+                                        
+                                        input = input.filter { $0.isNumber }
+                                        if input.count > numberOfCharacters {
+                                            input = String(input.prefix(numberOfCharacters))
+                                        }
+                                        validate()
+                                    }
+                            } else {
+                                EmptyView()
                             }
-                        }
-                        .disabled(isValidating)
-                        .padding()
-                        .onTapGesture {
-                            isFocused = true
-                        }
-                        .shake($shake, duration: 0.5) {
-                            input = ""
+                            
+                            HStack(spacing: 10) {
+                                ForEach(0..<numberOfCharacters, id: \.self) { index in
+                                    RoundedRectangle(cornerRadius: 5)
+                                        .stroke(shake ? .red : isValidating ? .gray : .accentColor, lineWidth: 2)
+                                        .frame(width: 40, height: 46)
+                                        .overlay(
+                                            Text(character(at: index))
+                                                .font(.title)
+                                        )
+                                }
+                            }
+                            .disabled(isValidating)
+                            .padding()
+                            .onTapGesture {
+                                isFocused = true
+                            }
+                            .shake($shake, duration: 0.5) {
+                                input = ""
+                            }
                         }
                         
                         Text(String.localizedStringWithFormat(NSLocalizedString("STR_2FA_CODE_VERIFICATION_INSTRUCTION_FMT", bundle: .module, comment: ""), email))
@@ -105,45 +130,6 @@ public struct VerificationCodeView: View {
                                 .modifier(LinkButtonModifier())
                                 .disabled(isValidating)
                             }
-                        }
-                        
-                        // Hidden text field
-                        if #available(iOS 17.0, macOS 14.0, *) {
-                            TextField("", text: $input)
-#if os(iOS)
-                                .keyboardType(.numberPad)
-#endif
-                                .focused($isFocused)
-                                .frame(width: 0, height: 0)
-                                .opacity(0)
-                                .onChange(of: input) { _, _ in
-                                    guard !isValidating else { return }
-                                    
-                                    input = input.filter { $0.isNumber }
-                                    if input.count > numberOfCharacters {
-                                        input = String(input.prefix(numberOfCharacters))
-                                    }
-                                    validate()
-                                }
-                                .disabled(isValidating)
-                        } else {
-                            TextField("", text: $input)
-#if os(iOS)
-                                .keyboardType(.numberPad)
-#endif
-                                .focused($isFocused)
-                                .frame(width: 0, height: 0)
-                                .opacity(0)
-                                .onChange(of: input) { _ in
-                                    guard !isValidating else { return }
-                                    
-                                    input = input.filter { $0.isNumber }
-                                    if input.count > numberOfCharacters {
-                                        input = String(input.prefix(numberOfCharacters))
-                                    }
-                                    validate()
-                                }
-                                .disabled(isValidating)
                         }
                     }
                     .padding(40)
@@ -199,6 +185,7 @@ public struct VerificationCodeView: View {
         self.onResendCode = onResendCode
         self.onContactSupport = onContactSupport
         self.onCancel = onCancel
+        self.isFocused = true
     }
     
     
@@ -269,7 +256,7 @@ public struct VerificationCodeView: View {
 }
 
 
-@available(iOS 17.0, macOS 12.0, *)
+@available(iOS 17.0, macOS 12.0, visionOS 1.1, *)
 fileprivate struct Shake<Content: View>: View {
     /// Set to true in order to animate
     @Binding var shake: Bool
@@ -286,7 +273,7 @@ fileprivate struct Shake<Content: View>: View {
     @State private var xOffset = 0.0
 
     var body: some View {
-        if #available(iOS 17.0, macOS 14.0, *) {
+        if #available(iOS 17.0, macOS 14.0, visionOS 1.1, *) {
             content
                 .offset(x: xOffset)
                 .onChange(of: shake) { _, shouldShake in
@@ -338,7 +325,7 @@ fileprivate struct Shake<Content: View>: View {
 }
 
 
-@available(iOS 17.0, macOS 12.0, *)
+@available(iOS 17.0, macOS 12.0, visionOS 1.1, *)
 fileprivate extension View {
     func shake(_ shake: Binding<Bool>,
                repeatCount: Int = 3,
@@ -369,7 +356,7 @@ fileprivate extension View {
 }
 
 
-@available(iOS 17.0, macOS 12.0, *)
+@available(iOS 17.0, macOS 12.0, visionOS 1.1, *)
 fileprivate struct SheetCloseButton: View {
     @Environment(\.colorScheme) var colorScheme
     
@@ -400,7 +387,7 @@ fileprivate struct SheetCloseButton: View {
 }
 
 
-@available(iOS 17.0, macOS 12.0, *)
+@available(iOS 17.0, macOS 12.0, visionOS 1.1, *)
 fileprivate struct SheetCloseButtonModifier: ViewModifier {
     var renderShadow: Bool
     
@@ -416,7 +403,7 @@ fileprivate struct SheetCloseButtonModifier: ViewModifier {
 }
 
 
-@available(iOS 17.0, macOS 12.0, *)
+@available(iOS 17.0, macOS 12.0, visionOS 1.1, *)
 fileprivate struct LinkButtonModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -430,7 +417,7 @@ fileprivate struct LinkButtonModifier: ViewModifier {
 }
 
 
-@available(iOS 17.0, macOS 12.0, *)
+@available(iOS 17.0, macOS 12.0, visionOS 1.1, *)
 fileprivate struct SheetModifier: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 18.0, macOS 15.0, visionOS 2.0, *) {

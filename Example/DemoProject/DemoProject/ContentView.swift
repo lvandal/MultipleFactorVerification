@@ -23,11 +23,11 @@ struct ContentView: View {
                 // Simulate an asynchronous validation process
                 await Task.sleep(1 * 2_000_000_000) // Sleep for 1 seconds
 //                return (false, .expired)
-                return (true, nil)
-//                return (false, .invalid)
+//                return (true, nil)
+                return (false, .invalid)
             },
                                  onResendCode: {
-                await Task.sleep(1 * 2_000_000_000) // Sleep for 1 seconds
+                await Task.sleep(1 * 1_000_000_000) // Sleep for 1 seconds
 //                return (true, nil)
                 return (false, .unknownError)
             },
