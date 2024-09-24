@@ -247,6 +247,7 @@ public struct VerificationCodeView: View {
                         self.error = error
                     }
                 } else if success {
+                    input = ""
                     alertMessage = String.localizedStringWithFormat(NSLocalizedString("STR_2FA_CODE_VERIFICATION_RESENT_FMT", bundle: .module, comment: ""), email)
                     showingAlert.toggle()
                 }

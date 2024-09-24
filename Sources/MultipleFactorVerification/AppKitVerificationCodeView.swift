@@ -142,6 +142,8 @@ public class AppKitVerificationCodeView: NSView {
             alert.beginSheetModal(for: window) { [weak self] response in
                 switch response {
                 case .alertFirstButtonReturn:
+                    self?.input = ""
+                    self?.updateCharacterViews()
                     self?.onResendCode?()
                 case .alertSecondButtonReturn:
                     self?.onContactSupport?()
@@ -154,6 +156,8 @@ public class AppKitVerificationCodeView: NSView {
             
             switch response {
             case .alertFirstButtonReturn:
+                input = ""
+                updateCharacterViews()
                 onResendCode?()
             case .alertSecondButtonReturn:
                 onContactSupport?()
@@ -165,6 +169,8 @@ public class AppKitVerificationCodeView: NSView {
     
     
     @objc private func didTapResend() {
+        input = ""
+        updateCharacterViews()
         onResendCode?()
     }
     

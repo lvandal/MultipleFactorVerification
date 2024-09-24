@@ -28,8 +28,8 @@ struct ContentView: View {
             },
                                  onResendCode: {
                 await Task.sleep(1 * 1_000_000_000) // Sleep for 1 seconds
-//                return (true, nil)
-                return (false, .unknownError)
+                return (true, nil)
+//                return (false, .unknownError)
             },
                                  onContactSupport: {
                 print("Contacting support...")
