@@ -142,11 +142,15 @@ public class AppKitVerificationCodeView: NSView {
             alert.beginSheetModal(for: window) { [weak self] response in
                 switch response {
                 case .alertFirstButtonReturn:
-                    self?.input = ""
-                    self?.updateCharacterViews()
-                    self?.onResendCode?()
+                    DispatchQueue.main.async { [weak self] in
+                        self?.input = ""
+                        self?.updateCharacterViews()
+                        self?.onResendCode?()
+                    }
                 case .alertSecondButtonReturn:
-                    self?.onContactSupport?()
+                    DispatchQueue.main.async { [weak self] in
+                        self?.onContactSupport?()
+                    }
                 default:
                     break
                 }
@@ -226,7 +230,7 @@ public class AppKitVerificationCodeView: NSView {
 
         var currentShake = 0
 
-        func performShake() {
+        @MainActor func performShake() {
             guard currentShake < numberOfShakes else {
                 DispatchQueue.main.async {
                     NSAnimationContext.runAnimationGroup({ context in
@@ -248,9 +252,11 @@ public class AppKitVerificationCodeView: NSView {
                     }
                     let translation = (currentShake % 2 == 0) ? shakeDistance : -shakeDistance
                     self.codeStackView.animator().frame.origin.x += translation
-                }, completionHandler: {
+                }, completionHandler: { [performShake] in
                     currentShake += 1
-                    performShake()
+                    if #available(macOS 10.15, *) {
+                        Task { @MainActor in performShake() }
+                    }
                 })
             }
         }
@@ -320,3 +326,4 @@ private extension Character {
     }
 }
 #endif
+
