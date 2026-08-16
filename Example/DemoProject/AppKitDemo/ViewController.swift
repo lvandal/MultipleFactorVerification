@@ -35,7 +35,7 @@ class ViewController: NSViewController {
             self?.dismiss(sheetViewController)
         }
         sheetViewController.onFailure = { [weak self] in
-            
+            print("Failed")
         }
         sheetViewController.onCancel = { [weak self] in
             self?.dismiss(sheetViewController)
